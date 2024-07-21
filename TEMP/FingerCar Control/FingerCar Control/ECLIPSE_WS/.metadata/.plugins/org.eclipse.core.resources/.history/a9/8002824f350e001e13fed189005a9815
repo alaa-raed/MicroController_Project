@@ -1,0 +1,78 @@
+/******************************************************************************
+ *
+ * Module: Common - Macros
+ *
+ * File Name: main.c
+ *
+ * Description: Project main file
+ *
+ * Author: Mohamed Hassan
+ *
+ *******************************************************************************/
+#include<avr/io.h>
+#include<avr/interrupt.h>
+#include<stdlib.h>
+#include"lcd.h"
+#include "flex_sensor.h"
+#include "adc.h"
+#include "gpio.h"
+#include <util/delay.h>
+#include "uart.h"
+#include "L293B.h"
+int main()
+{	int vReal,vImg;
+/* UART */
+//UART_ConfigType uart;
+//uart.bit_data=CHARACTER_SIZE_8;
+//uart.parity=Even;
+//uart.stop_bit=UART_STOP_1BIT_SELECT;
+//uart.baud_rate=9600;
+//UART_init(&uart);
+LCD_init();
+ADC_ConfigType currentConfig;
+currentConfig.prescaler=PRESCALER_128;
+currentConfig.reference_mode=AVCC_MODE;
+ADC_init(&currentConfig);
+flex_parameters flexDirect;
+while(1)
+{
+	flex_sensor_start(PIN0_ID,&flexDirect,51000);
+	vReal=flexDirect.out_voltage;
+	vImg=(int)((flexDirect.out_voltage*100))%100;
+	LCD_displayStringRowColumn(0,0,"V =");
+	LCD_displayChar(' ');
+	LCD_intgerToString(vReal);
+	LCD_displayChar('.');
+	LCD_intgerToString(vImg);
+	LCD_displayChar(' ');
+	LCD_displayStringRowColumn(1,0,"Res");
+	LCD_displayChar(' ');
+	LCD_intgerToString(flexDirect.res);
+	LCD_displayStringRowColumn(1,9," ");
+//	UART_sendByte(READY);
+//	if(UART_recieveByte()==READY)
+//	{
+//		UART_sendByte(vReal);
+//		if(UART_recieveByte()==DONE)
+//		{
+//			UART_sendByte(vImg);
+//			if(UART_recieveByte()==DONE)
+//			{
+//				UART_sendByte(flexDirect.res);
+//				if(UART_recieveByte()==DONE)
+//				{
+//					UART_sendByte(flexDirect.movDirect);
+//					if(UART_recieveByte()==DONE)
+//					{
+//						UART_sendByte(DONE);
+//					}
+//
+//				}
+//
+//			}
+//		}
+//	}
+
+
+}
+}

@@ -1,0 +1,93 @@
+/******************************************************************************
+ *
+ * Module: main file
+ *
+ * File Name: main.c
+ *
+ * Description: Project main file
+ *
+ * Author: Mohamed Hassan
+ *
+ *******************************************************************************/
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <util/delay.h>
+#include "uart.h"
+#include "lcd.h"
+#include "L293B.h"
+void MoveMotorForward(void);
+void MoveMotorBackward(void);
+void StopMotor(void);
+
+int main(void)
+{
+	LCD_init();
+	DDRD &= ~(1<<0);
+	DDRB &= ~(1<<0);
+	uint8 vREAL,vImg,direction;
+	uint16 rPart1,rPart2,rPart3,resAll;
+	configureL293B();
+	UART_ConfigType UART_Config = {CHARACTER_SIZE_8,Even,UART_STOP_1BIT_SELECT,9600};
+	UART_init(&UART_Config);
+	while(UART_recieveByte()!=1);
+	while (1)
+	{
+		vREAL=UART_recieveByte();
+		while(UART_recieveByte()!=2);
+		vImg=UART_recieveByte();
+		rPart1=UART_recieveByte();
+		rPart2=UART_recieveByte();
+		rPart3=UART_recieveByte();
+		direction= UART_recieveByte();
+		resAll=(rPart3*10000)+(rPart2*100)+rPart3;
+		LCD_displayString("V= ");
+		LCD_intgerToString(vREAL);
+		LCD_displayChar('.');
+		LCD_intgerToString(vImg);
+		LCD_displayStringRowColumn(1,7,"RES");
+		LCD_intgerToString(resAll);
+		if(direction == 0)
+		{
+			MoveMotorForward();
+			_delay_ms(1000);
+			LCD_displayStringRowColumn(1,0," Forward ");
+		}
+		else if (direction == 1)
+		{
+			MoveMotorBackward();
+			_delay_ms(1000);
+			LCD_displayStringRowColumn(1,0," Backward ");
+		}
+		else {
+			if(PINB&(1<<0))
+			{
+				_delay_ms(100);
+				StopMotor();
+				LCD_displayStringRowColumn(1,0," Stop ");
+			}
+			while (PINB&(1<<0));
+
+		}
+
+	}
+
+}
+// Rotates Motor in Anticlockwise (forward)
+void MoveMotorForward(void){
+	PORTC = 0x0A;
+	PORTD = 0xA0;
+}
+
+// Rotates Motor in clockwise (backward)
+void MoveMotorBackward(void){
+	PORTC = 0x05;
+	PORTD = 0x50;
+}
+
+//stop motor
+void StopMotor(void)
+{
+	PORTC = 0x00;
+	PORTD = 0x00;
+}
+

@@ -1,0 +1,40 @@
+07:17:18 **** Incremental Build of configuration Debug for project MC_SENSOR ****
+make all 
+Building file: ../main.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega32 -DF_CPU=16000000UL -MMD -MP -MF"main.d" -MT"main.o" -c -o "main.o" "../main.c"
+In file included from ../main.c:18:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+Finished building: ../main.c
+ 
+Building target: MC_SENSOR.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,MC_SENSOR.map -mmcu=atmega32 -o "MC_SENSOR.elf"  ./L293B.o ./adc.o ./flex_sensor.o ./gpio.o ./lcd.o ./main.o ./uart.o   
+Finished building target: MC_SENSOR.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S MC_SENSOR.elf  >"MC_SENSOR.lss"
+Finished building: MC_SENSOR.lss
+ 
+Create Flash image (ihex format)
+avr-objcopy -R .eeprom -R .fuse -R .lock -R .signature -O ihex MC_SENSOR.elf  "MC_SENSOR.hex"
+Finished building: MC_SENSOR.hex
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega32 MC_SENSOR.elf
+AVR Memory Usage
+----------------
+Device: atmega32
+
+Program:   13138 bytes (40.1% Full)
+(.text + .data + .bootloader)
+
+Data:        296 bytes (14.5% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+
+07:17:19 Build Finished. 0 errors, 1 warnings. (took 442ms)
+
